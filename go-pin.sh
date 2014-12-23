@@ -1,40 +1,40 @@
 #!/bin/bash
-ROOT=`pwd`
+ROOT=$(pwd)
 NAME=$0
 ACTION=${1-help}
 
 function freeze_git() {
     find -type d -iname ".git" | while read repo; do 
-      cd $ROOT
-      cd $repo/..
-      REV=`git rev-parse HEAD`
+      cd "$ROOT"
+      cd "$repo/.."
+      REV=$(git rev-parse HEAD)
       echo "git $REV ${repo:2:-5}"
     done
 }
 
 function freeze_hg() {
   find -type d  -iname ".hg" | while read repo; do 
-    cd $ROOT
-    cd $repo/..
-    REV=`hg identify -i`
+    cd "$ROOT"
+    cd "$repo/.."
+    REV=$(hg identify -i)
     echo "hg $REV ${repo:2:-4}"
   done  
 }
 
 function freeze_bzr() {
   find -type d  -iname ".bzr" | while read repo; do
-    cd $ROOT
-    cd $repo/.. 
-    REV=`bzr log -l1 --show-ids | grep revision-id | cut -c14-`
+    cd "$ROOT"
+    cd "$repo/.."
+    REV=$(bzr log -l1 --show-ids | grep revision-id | cut -c14-)
     echo "bzr $REV ${repo:2:-5}"
   done
 }
 
 function freeze_svn() {
   find -type d  -iname ".svn" | while read repo; do
-    cd $ROOT
-    cd $repo/..
-    REV=`svn info | grep Revision | egrep -o [0-9]+`
+    cd "$ROOT"
+    cd "$repo/.."
+    REV=$(svn info | grep Revision | egrep -o [0-9]+)
     echo "svn $REV ${repo:2:-5}"
   done
 }
@@ -53,11 +53,11 @@ function reset_git() {
   REPO=$1
   HASH=$2
   CD="cd $REPO"
-  $CD || (git clone ssh://$REPO $REPO || git clone http://$REPO $REPO) 
-  cd $ROOT
+  $CD || (git clone "ssh://$REPO" "$REPO" || git clone "http://$REPO" "$REPO") 
+  cd "$ROOT"
   $CD
   CHK="git checkout -q $HASH"
-  echo $CHK
+  echo "$CHK"
   $CHK || (git fetch && $CHK)
 }
 
@@ -81,18 +81,18 @@ function reset_svn() {
   REPO=$1
   HASH=$2
   cd "./$REPO"
-  svn update -r $HASH
+  svn update -r "$HASH"
 }
 
 function reset() {
    while read TYPE HASH REPO; do
-      cd $ROOT
+      cd "$ROOT"
       echo "$REPO"
       case "$TYPE" in
-        git) reset_git $REPO $HASH ;;
-        hg)  reset_hg  $REPO $HASH ;;
-        svn) reset_svn $REPO $HASH ;;
-        bzr) reset_bzr $REPO $HASH ;;
+        git) reset_git "$REPO" "$HASH" ;;
+        hg)  reset_hg  "$REPO" "$HASH" ;;
+        svn) reset_svn "$REPO" "$HASH" ;;
+        bzr) reset_bzr "$REPO" "$HASH" ;;
         *)   
           echo "Unsupported repo type $TYPE" 
           exit 1
@@ -108,9 +108,9 @@ function reset() {
 
 function update_git() {
   find -iname ".git" | while read repo; do 
-    cd $ROOT
-    cd $repo/..
-    echo $repo
+    cd "$ROOT"
+    cd "$repo/.."
+    echo "$repo"
     git fetch
     git reset --hard origin/master
     echo
@@ -119,9 +119,9 @@ function update_git() {
 
 function update_hg() {
   find -iname ".hg" | while read repo; do 
-    cd $ROOT
-    cd $repo/..
-    echo $repo
+    cd "$ROOT"
+    cd "$repo/.."
+    echo "$repo"
     hg pull
     echo
   done
@@ -129,9 +129,9 @@ function update_hg() {
 
 function update_bzr() {
   find -iname ".bzr" | while read repo; do 
-    cd $ROOT
-    cd $repo/..
-    echo $repo
+    cd "$ROOT"
+    cd "$repo/.."
+    echo "$repo"
     bzr pull
     echo
   done
@@ -139,9 +139,9 @@ function update_bzr() {
 
 function update_svn() {
   find -iname ".svn" | while read repo; do 
-    cd $ROOT
-    cd $repo/..
-    echo $repo
+    cd "$ROOT"
+    cd "$repo/.."
+    echo "$repo"
     svn update
     echo
   done
@@ -180,7 +180,7 @@ case "$ACTION" in
     reset)  reset  ;;
     update) update ;;
     *)
-        echo "Unknown:" $ACTION
+        echo "Unknown: $ACTION"
         help
         ;;
 esac
