@@ -4,7 +4,7 @@ NAME=$0
 ACTION=${1-help}
 
 function freeze_git() {
-    find -iname ".git" | while read repo; do 
+    find -type d -iname ".git" | while read repo; do 
       cd $ROOT
       cd $repo/..
       REV=`git rev-parse HEAD`
@@ -13,7 +13,7 @@ function freeze_git() {
 }
 
 function freeze_hg() {
-  find -iname ".hg" | while read repo; do 
+  find -type d  -iname ".hg" | while read repo; do 
     cd $ROOT
     cd $repo/..
     REV=`hg identify -i`
@@ -22,16 +22,16 @@ function freeze_hg() {
 }
 
 function freeze_bzr() {
-  find -iname ".bzr" | while read repo; do
+  find -type d  -iname ".bzr" | while read repo; do
     cd $ROOT
-    cd $repo/..
+    cd $repo/.. 
     REV=`bzr log -l1 --show-ids | grep revision-id | cut -c14-`
     echo "bzr $REV ${repo:2:-5}"
   done
 }
 
 function freeze_svn() {
-  find -iname ".svn" | while read repo; do
+  find -type d  -iname ".svn" | while read repo; do
     cd $ROOT
     cd $repo/..
     REV=`svn info | grep Revision | egrep -o [0-9]+`
@@ -50,44 +50,56 @@ function freeze() {
 
 
 function reset_git() {
-  HASH=$1
-  CHK="git checkout $HASH"
+  REPO=$1
+  HASH=$2
+  CD="cd $REPO"
+  $CD || (git clone ssh://$REPO $REPO || git clone http://$REPO $REPO) 
+  cd $ROOT
+  $CD
+  CHK="git checkout -q $HASH"
+  echo $CHK
   $CHK || (git fetch && $CHK)
 }
 
 function reset_hg() {
-  HASH=$1
+  REPO=$1
+  HASH=$2
+  cd "./$REPO"
   CHK="hg checkout -c $HASH"
   $CHK || (hg pull && $CHK)
 }
 
 function reset_bzr() {
-  HASH=$1
+  REPO=$1
+  HASH=$2
+  cd "./$REPO"
   CHK="bzr revert -r revid:$HASH"
   $CHK || (bzr pull && $CHK)
 }
 
 function reset_svn() {
-  HASH=$1
+  REPO=$1
+  HASH=$2
+  cd "./$REPO"
   svn update -r $HASH
 }
 
 function reset() {
    while read TYPE HASH REPO; do
       cd $ROOT
-      cd "./$REPO"
       echo "$REPO"
       case "$TYPE" in
-        git) reset_git $HASH ;;
-        hg)  reset_hg  $HASH ;;
-        svn) reset_svn $HASH ;;
-        bzr) reset_bzr $HASH ;;
+        git) reset_git $REPO $HASH ;;
+        hg)  reset_hg  $REPO $HASH ;;
+        svn) reset_svn $REPO $HASH ;;
+        bzr) reset_bzr $REPO $HASH ;;
         *)   
           echo "Unsupported repo type $TYPE" 
           exit 1
           ;;
       esac
-      echo 
+      echo ----------------------------------
+      echo
     done
 }
 
@@ -148,13 +160,14 @@ function update() {
 function help() {
     echo "Usage: $NAME freeze|reset|update|help"
     echo
-    echo "  freeze prints git repositories in current filesystem tree and"
+    echo "  'freeze' prints git repositories in current filesystem tree and"
     echo "  their respective commit hashes to stdout"
     echo 
-    echo "  reset reads pairs (hash, repository) from stdin and resets the"
+    echo "  'reset' reads pairs (hash, repository) from stdin and resets the"
     echo "  repositories in filesystem"
     echo 
-    echo "  update tries to update all repositories found in current subtree" 
+    echo "  'update' tries to update all repositories found in current subtree" 
+    echo "  after 'update' you should check your build and perform a freeze"
     echo
     echo "  help displays this screen"
 }
