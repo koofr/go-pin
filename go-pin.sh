@@ -191,5 +191,6 @@ case "$ACTION" in
     *)
         echo "Unknown: $ACTION"
         help
+        exit 1
         ;;
 esac
