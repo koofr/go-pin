@@ -6,13 +6,10 @@
 When fetching dependencies with `go get` you are unable to specify exact version, you will just end up with the default. Main idea of this tool is to create a file which will specify exact version for each dependency and then commit that file to your project. This allows repeatable builds since you can now reset dependencies to specific versions.
 
 ## Workflow
+`go-pin` works in the directory specified by the `$GOPATH` environment variable as used by Go. It finds all versioned subdirectoried and pins their versions.
 
 ### Regular build
-If this is the first build or you got an error about missing dependencies then fetch them.
-
-    go get # or whatever you use
-
-Then reset dependencies to frozen versions
+If this is the first build or you got an error about missing dependencies then reset dependencies to frozen versions
 
     cat versions | go-pin reset
 
@@ -21,17 +18,18 @@ This assumes you have version information stored in file `versions`, you can use
 ### Maintenance
 You will occasionally want to upgrade your dependencies. This is a two part process: update and freeze. 
 
-You may use `update` command or perform updates manually if you wish to use specific branch or tag or if you only wish to do a partial update.
+You may use `update` command or perform updates manually if you wish to use specific branch or tag or if you only wish to do a partial update or just run `go get`.
 
     go-pin update
 
-After ensuring your application works fine with updated dependencies you can now freeze them.
+After ensuring your application works fine with updated dependencies you can now freeze them. 
 
     go-pin freeze > versions
 
 This assumes you want to store version information in file `versions`, you can use whatever you like. Freeze will store repository type, exact revision and target directory.
 
-**NOTE** `go-pin` works in current subtree. It will also try to update and freeze you application's `.git` dir if run at project root. Usually you will want to run this in some other directory e.g. `../src`.
+### Automation 
+If you are using some kind of build system like Make you can simplify your process by requiring reset before every build. This way if somebody else updates dependencies, everything will automatically update on your machine. This is especially nice if you run builds on a build server.
 
 ## Supported VCS
 

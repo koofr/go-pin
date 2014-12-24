@@ -1,18 +1,20 @@
 #!/bin/bash
-ROOT=$(pwd)
+ROOT="$GOPATH/src"
 NAME=$0
 ACTION=${1-help}
 
 function freeze_git() {
-    find -type d -iname ".git" | while read repo; do 
-      cd "$ROOT"
-      cd "$repo/.."
-      REV=$(git rev-parse HEAD)
-      echo "git $REV ${repo:2:-5}"
-    done
+  cd "$ROOT"
+  find -type d -iname ".git" | while read repo; do 
+    cd "$ROOT"
+    cd "$repo/.."
+    REV=$(git rev-parse HEAD)
+    echo "git $REV ${repo:2:-5}"
+  done
 }
 
 function freeze_hg() {
+  cd "$ROOT"
   find -type d  -iname ".hg" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
@@ -22,6 +24,7 @@ function freeze_hg() {
 }
 
 function freeze_bzr() {
+  cd "$ROOT"
   find -type d  -iname ".bzr" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
@@ -31,6 +34,7 @@ function freeze_bzr() {
 }
 
 function freeze_svn() {
+  cd "$ROOT"
   find -type d  -iname ".svn" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
@@ -182,6 +186,11 @@ function help() {
 }
 
 
+
+if [ "x$GOPATH" == "x" ]; then
+  echo "Error: missing \$GOPATH variable"
+  exit 2
+fi
 
 case "$ACTION" in 
     help)   help   ;;
