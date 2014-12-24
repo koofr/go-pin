@@ -53,7 +53,7 @@ function reset_git() {
   REPO=$1
   HASH=$2
   CD="cd $REPO"
-  $CD || (git clone "ssh://$REPO" "$REPO" || git clone "http://$REPO" "$REPO") 
+  $CD || (git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO") 
   cd "$ROOT"
   $CD
   CHK="git checkout -q $HASH"
@@ -64,7 +64,10 @@ function reset_git() {
 function reset_hg() {
   REPO=$1
   HASH=$2
-  cd "./$REPO"
+  CD="cd ./$REPO"
+  $CD || (hg clone "http://$REPO" "$REPO")
+  cd "$ROOT"
+  $CD
   CHK="hg checkout -c $HASH"
   $CHK || (hg pull && $CHK)
 }
@@ -72,7 +75,10 @@ function reset_hg() {
 function reset_bzr() {
   REPO=$1
   HASH=$2
-  cd "./$REPO"
+  CD="cd ./$REPO"
+  $CD || (bzr clone "http://$REPO" "$REPO")
+  cd "$ROOT"
+  $CD
   CHK="bzr revert -r revid:$HASH"
   $CHK || (bzr pull && $CHK)
 }
@@ -80,7 +86,10 @@ function reset_bzr() {
 function reset_svn() {
   REPO=$1
   HASH=$2
-  cd "./$REPO"
+  CD="cd ./$REPO"
+  $CD || (svn checkout "http://$REPO" "$REPO")
+  cd "$ROOT"
+  $CD
   svn update -r "$HASH"
 }
 
