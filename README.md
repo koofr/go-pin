@@ -1,4 +1,5 @@
 # go-pin
+[![Build Status](https://travis-ci.org/koofr/go-pin.svg?branch=master)](https://travis-ci.org/koofr/go-pin)
 
 `go-pin` is a tool for pinning dependencies to specific versions. It is tailored to work with Go language but can be used for other purposes.
 
