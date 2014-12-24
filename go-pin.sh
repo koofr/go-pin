@@ -80,7 +80,7 @@ function reset_bzr() {
   REPO=$1
   HASH=$2
   CD="cd ./$REPO"
-  $CD || (bzr clone "http://$REPO" "$REPO")
+  $CD || (mkdir -p $(dirname "$REPO"); bzr branch "http://$REPO" "$REPO")
   cd "$ROOT"
   $CD
   CHK="bzr revert -r revid:$HASH"
