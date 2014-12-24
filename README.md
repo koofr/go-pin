@@ -35,3 +35,5 @@ If you are using some kind of build system like Make you can simplify your proce
 
 Currently supporting same VCS as `go import`: git, mercurial, bazaar and subversion.
 
+## Get it
+See the [releases tab on Github](https://github.com/koofr/go-pin/releases).
