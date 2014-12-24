@@ -31,7 +31,7 @@ After ensuring your application works fine with updated dependencies you can now
 
 This assumes you want to store version information in file `versions`, you can use whatever you like. Freeze will store repository type, exact revision and target directory.
 
-**NOTE** `go-pin` works in current subtree. It will also try to update and freeze you application's `.git.` dir if run at project run. Usually you will want to run this in some other directory e.g. `.../src`.
+**NOTE** `go-pin` works in current subtree. It will also try to update and freeze you application's `.git` dir if run at project root. Usually you will want to run this in some other directory e.g. `../src`.
 
 ## Supported VCS
 
