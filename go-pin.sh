@@ -171,7 +171,7 @@ function update() {
 
 
 function help() {
-    echo "Usage: $NAME freeze|reset|update|help"
+    echo "Usage: $NAME freeze|reset|update|help [-s]"
     echo
     echo "  'freeze' prints git repositories in current filesystem tree and"
     echo "  their respective commit hashes to stdout"
@@ -183,6 +183,8 @@ function help() {
     echo "  after 'update' you should check your build and perform a freeze"
     echo
     echo "  help displays this screen"
+    echo
+    echo "  -s disables all output"
 }
 
 
@@ -191,6 +193,12 @@ if [ "x$GOPATH" == "x" ]; then
   echo "Error: missing \$GOPATH variable"
   exit 2
 fi
+
+
+if [ "$2" == "-s" ]; then
+    exec > /dev/null 2>&1
+fi
+
 
 case "$ACTION" in 
     help)   help   ;;
