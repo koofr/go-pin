@@ -5,41 +5,45 @@ ACTION=${1-help}
 
 function freeze_git() {
   cd "$ROOT"
-  find -type d -iname ".git" | while read repo; do 
+  find . -type d -iname ".git" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     REV=$(git rev-parse HEAD)
-    echo "git $REV ${repo:2:-5}"
+    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+    echo "git $REV $IMPORT"
   done
 }
 
 function freeze_hg() {
   cd "$ROOT"
-  find -type d  -iname ".hg" | while read repo; do 
+  find . -type d  -iname ".hg" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     REV=$(hg identify -i)
-    echo "hg $REV ${repo:2:-4}"
+    IMPORT=$(echo $repo | cut -c3- | rev | cut -c5- | rev)
+    echo "hg $REV $IMPORT"
   done  
 }
 
 function freeze_bzr() {
   cd "$ROOT"
-  find -type d  -iname ".bzr" | while read repo; do
+  find . -type d -iname ".bzr" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(bzr log -l1 --show-ids | grep revision-id | cut -c14-)
-    echo "bzr $REV ${repo:2:-5}"
+    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+    echo "bzr $REV $IMPORT"
   done
 }
 
 function freeze_svn() {
   cd "$ROOT"
-  find -type d  -iname ".svn" | while read repo; do
+  find . -type d -iname ".svn" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(svn info | grep Revision | egrep -o [0-9]+)
-    echo "svn $REV ${repo:2:-5}"
+    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+    echo "svn $REV $IMPORT"
   done
 }
 
@@ -121,7 +125,7 @@ function reset() {
 
 function update_git() {
   cd "$ROOT"
-  find -iname ".git" | while read repo; do 
+  find . -iname ".git" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -133,7 +137,7 @@ function update_git() {
 
 function update_hg() {
   cd "$ROOT"
-  find -iname ".hg" | while read repo; do 
+  find . -iname ".hg" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -144,7 +148,7 @@ function update_hg() {
 
 function update_bzr() {
   cd "$ROOT"
-  find -iname ".bzr" | while read repo; do 
+  find . -iname ".bzr" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -155,7 +159,7 @@ function update_bzr() {
 
 function update_svn() {
   cd "$ROOT"
-  find -iname ".svn" | while read repo; do 
+  find . -iname ".svn" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
