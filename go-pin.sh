@@ -120,6 +120,7 @@ function reset() {
 
 
 function update_git() {
+  cd "$ROOT"
   find -iname ".git" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
@@ -131,6 +132,7 @@ function update_git() {
 }
 
 function update_hg() {
+  cd "$ROOT"
   find -iname ".hg" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
@@ -141,6 +143,7 @@ function update_hg() {
 }
 
 function update_bzr() {
+  cd "$ROOT"
   find -iname ".bzr" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
@@ -151,6 +154,7 @@ function update_bzr() {
 }
 
 function update_svn() {
+  cd "$ROOT"
   find -iname ".svn" | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
