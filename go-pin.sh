@@ -5,7 +5,7 @@ ACTION=${1-help}
 
 function freeze_git() {
   cd "$ROOT"
-  find . -type d -iname ".git" | sort | while read repo; do 
+  find . -type d -iname ".git" | sort | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(git rev-parse HEAD)
@@ -16,13 +16,13 @@ function freeze_git() {
 
 function freeze_hg() {
   cd "$ROOT"
-  find . -type d  -iname ".hg" | sort | while read repo; do 
+  find . -type d  -iname ".hg" | sort | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(hg identify -i)
     IMPORT=$(echo $repo | cut -c3- | rev | cut -c5- | rev)
     echo "hg $REV $IMPORT"
-  done  
+  done
 }
 
 function freeze_bzr() {
@@ -61,7 +61,7 @@ function reset_git() {
   REPO=$1
   HASH=$2
   CD="cd $REPO"
-  $CD || (git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO") 
+  $CD || (git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO")
   cd "$ROOT"
   $CD
   CHK="git checkout -q $HASH"
@@ -110,8 +110,8 @@ function reset() {
         hg)  reset_hg  "$REPO" "$HASH" ;;
         svn) reset_svn "$REPO" "$HASH" ;;
         bzr) reset_bzr "$REPO" "$HASH" ;;
-        *)   
-          echo "Unsupported repo type $TYPE" 
+        *)
+          echo "Unsupported repo type $TYPE"
           exit 1
           ;;
       esac
@@ -125,7 +125,7 @@ function reset() {
 
 function update_git() {
   cd "$ROOT"
-  find . -iname ".git" | while read repo; do 
+  find . -iname ".git" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -137,7 +137,7 @@ function update_git() {
 
 function update_hg() {
   cd "$ROOT"
-  find . -iname ".hg" | while read repo; do 
+  find . -iname ".hg" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -148,7 +148,7 @@ function update_hg() {
 
 function update_bzr() {
   cd "$ROOT"
-  find . -iname ".bzr" | while read repo; do 
+  find . -iname ".bzr" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -159,7 +159,7 @@ function update_bzr() {
 
 function update_svn() {
   cd "$ROOT"
-  find . -iname ".svn" | while read repo; do 
+  find . -iname ".svn" | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     echo "$repo"
@@ -183,11 +183,11 @@ function help() {
     echo
     echo "  'freeze' prints git repositories in current filesystem tree and"
     echo "  their respective commit hashes to stdout"
-    echo 
+    echo
     echo "  'reset' reads pairs (hash, repository) from stdin and resets the"
     echo "  repositories in filesystem"
-    echo 
-    echo "  'update' tries to update all repositories found in current subtree" 
+    echo
+    echo "  'update' tries to update all repositories found in current subtree"
     echo "  after 'update' you should check your build and perform a freeze"
     echo
     echo "  help displays this screen"
@@ -208,7 +208,7 @@ if [ "$2" == "-s" ]; then
 fi
 
 
-case "$ACTION" in 
+case "$ACTION" in
     help)   help   ;;
     freeze) freeze ;;
     reset)  reset  ;;
