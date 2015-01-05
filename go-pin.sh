@@ -5,7 +5,7 @@ ACTION=${1-help}
 
 function freeze_git() {
   cd "$ROOT"
-  find . -type d -iname ".git" | while read repo; do 
+  find . -type d -iname ".git" | sort | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     REV=$(git rev-parse HEAD)
@@ -16,7 +16,7 @@ function freeze_git() {
 
 function freeze_hg() {
   cd "$ROOT"
-  find . -type d  -iname ".hg" | while read repo; do 
+  find . -type d  -iname ".hg" | sort | while read repo; do 
     cd "$ROOT"
     cd "$repo/.."
     REV=$(hg identify -i)
@@ -27,7 +27,7 @@ function freeze_hg() {
 
 function freeze_bzr() {
   cd "$ROOT"
-  find . -type d -iname ".bzr" | while read repo; do
+  find . -type d -iname ".bzr" | sort | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(bzr log -l1 --show-ids | grep revision-id | cut -c14-)
@@ -38,7 +38,7 @@ function freeze_bzr() {
 
 function freeze_svn() {
   cd "$ROOT"
-  find . -type d -iname ".svn" | while read repo; do
+  find . -type d -iname ".svn" | sort | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
     REV=$(svn info | grep Revision | egrep -o [0-9]+)
