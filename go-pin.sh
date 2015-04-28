@@ -9,10 +9,12 @@ function freeze_git() {
     cd "$ROOT"
     cd "$repo/.."
     REV=$(git rev-parse HEAD)
+    URI=$(git config --get remote.origin.url)
     IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
-    echo "git $REV $IMPORT"
+    echo "git $REV $IMPORT $URI"
   done
 }
+
 
 function freeze_hg() {
   cd "$ROOT"
@@ -54,14 +56,12 @@ function freeze() {
   freeze_svn
 }
 
-
-
-
 function reset_git() {
   REPO=$1
   HASH=$2
+  URI=$3
   CD="cd $REPO"
-  $CD || (git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO")
+  $CD || (git clone "$URI" "$REPO" || git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO")
   cd "$ROOT"
   $CD
   CHK="git checkout -q $HASH"
@@ -102,11 +102,11 @@ function reset_svn() {
 }
 
 function reset() {
-   while read TYPE HASH REPO; do
+   while read TYPE HASH REPO URI; do
       cd "$ROOT"
       echo "$REPO"
       case "$TYPE" in
-        git) reset_git "$REPO" "$HASH" ;;
+        git) reset_git "$REPO" "$HASH" "$URI" ;;
         hg)  reset_hg  "$REPO" "$HASH" ;;
         svn) reset_svn "$REPO" "$HASH" ;;
         bzr) reset_bzr "$REPO" "$HASH" ;;
