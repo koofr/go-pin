@@ -61,12 +61,20 @@ function reset_git() {
   HASH=$2
   URI=$3
   CD="cd $REPO"
-  $CD || (git clone "$URI" "$REPO" || git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO")
+  if [ ! -d "$REPO" ]; then
+    if [ "$URI" != "" ]; then
+      git clone "$URI" "$REPO"
+    else
+      (git clone "http://$REPO" "$REPO" || git clone "ssh://$REPO" "$REPO")
+    fi
+  fi
   cd "$ROOT"
   $CD
-  CHK="git checkout -q $HASH"
-  echo "$CHK"
-  $CHK || (git fetch && $CHK)
+  if [ $(git rev-parse HEAD) != "$HASH" ]; then
+      CHK="git checkout -q $HASH"
+      echo "($REPO) $CHK"
+      $CHK || (git fetch && $CHK)
+  fi
 }
 
 function reset_hg() {
