@@ -72,7 +72,6 @@ function reset_git() {
   $CD
   if [ $(git rev-parse HEAD) != "$HASH" ]; then
       CHK="git checkout -q $HASH"
-      echo "($REPO) $CHK"
       $CHK || (git fetch && $CHK)
   fi
 }
@@ -123,8 +122,6 @@ function reset() {
           exit 1
           ;;
       esac
-      echo ----------------------------------
-      echo
     done
 }
 
