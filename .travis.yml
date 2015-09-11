@@ -3,7 +3,7 @@ sudo: false # dockerized builds
 deploy:
   provider: releases
   api_key:
-    secure: HTrI3TeTh5bnniGqgWcwWa5Wa0OP2jr6osL3mT+2WI9Ur9rTS6fgeoYsz0evrYgiRlw3mIUShOpRez3MhWl9+HK2+qHQMOXl5KMh8SivkRcQDK9b7uV7pzC6inraOz3Ih6uh1g9gqPOPrFnXCtlbpmXRF65iqf9lDat7zctOLoo=
+    secure: ZOZk3Zdni9TJwnX7amyL2tSNHM371kYs9ipL7qagkmqcNa4zh40k5t/pF4zTs7kXu1eW4Iljucj93KxT7QIiTyolCHvS186m0RONOVU4pSwF6Yc0bILZ10FhMH5x0sXLZAcDVoulw14Pd+Xx+Kux+QZUPFpoWxBHQ/vBSmJiImE=
   file: go-pin.sh
   on:
     repo: koofr/go-pin
