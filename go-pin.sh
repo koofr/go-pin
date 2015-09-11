@@ -8,7 +8,10 @@ function freeze_git() {
   find . -type d -iname ".git" | sort | while read repo; do
     cd "$ROOT"
     cd "$repo/.."
-    REV=$(git rev-parse HEAD)
+    REV=$(git tag --points-at HEAD | head -n 1)
+    if [ "$REV" = "" ]; then
+      REV=$(git rev-parse HEAD)
+    fi
     URI=$(git config --get remote.origin.url)
     IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
     echo "git $REV $IMPORT $URI"
