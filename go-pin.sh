@@ -4,59 +4,52 @@ NAME=$0
 ACTION=${1-help}
 
 function freeze_git() {
-  cd "$ROOT"
-  find . -type d -iname ".git" | sort | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    REV=$(git tag --points-at HEAD | head -n 1)
-    if [ "$REV" = "" ]; then
-      REV=$(git rev-parse HEAD)
-    fi
-    URI=$(git config --get remote.origin.url)
-    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
-    echo "git $REV $IMPORT $URI"
-  done
+  cd "$repo/.."
+  REV=$(git tag --points-at HEAD | head -n 1)
+  if [ "$REV" = "" ]; then
+    REV=$(git rev-parse HEAD)
+  fi
+  URI=$(git config --get remote.origin.url)
+  IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+  echo "git $REV $IMPORT $URI"
 }
 
-
 function freeze_hg() {
-  cd "$ROOT"
-  find . -type d  -iname ".hg" | sort | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    REV=$(hg identify -i)
-    IMPORT=$(echo $repo | cut -c3- | rev | cut -c5- | rev)
-    echo "hg $REV $IMPORT"
-  done
+  cd "$repo/.."
+  REV=$(hg identify -i)
+  IMPORT=$(echo $repo | cut -c3- | rev | cut -c5- | rev)
+  echo "hg $REV $IMPORT"
 }
 
 function freeze_bzr() {
-  cd "$ROOT"
-  find . -type d -iname ".bzr" | sort | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    REV=$(bzr log -l1 --show-ids | grep revision-id | cut -c14-)
-    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
-    echo "bzr $REV $IMPORT"
-  done
+  cd "$repo/.."
+  REV=$(bzr log -l1 --show-ids | grep revision-id | cut -c14-)
+  IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+  echo "bzr $REV $IMPORT"
 }
 
 function freeze_svn() {
-  cd "$ROOT"
-  find . -type d -iname ".svn" | sort | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    REV=$(svn info | grep Revision | egrep -o [0-9]+)
-    IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
-    echo "svn $REV $IMPORT"
-  done
+  cd "$repo/.."
+  REV=$(svn info | grep Revision | egrep -o [0-9]+)
+  IMPORT=$(echo $repo | cut -c3- | rev | cut -c6- | rev)
+  echo "svn $REV $IMPORT"
 }
 
 function freeze() {
-  freeze_git
-  freeze_hg
-  freeze_bzr
-  freeze_svn
+  map_repos "freeze"
+}
+
+# Walk directories, call functions like <prefix>_hg, <prefix>_git, etc
+function map_repos() {
+  local prefix="$1"
+  cd "$ROOT"
+  find . -type d  \( -name ".hg" -o -name ".bzr" -o -name ".git" -o -name ".svn" \) | sort | while read repo; do
+    cd "$ROOT"
+    # suffix should be git, svn, bzr, etc
+    suffix=$(echo $repo | rev | cut -d '.' -f 1 | rev)
+    # call the function $prefix_$suffix
+    ${prefix}_${suffix} "$repo"
+  done
 }
 
 function reset_git() {
@@ -130,57 +123,37 @@ function reset() {
 
 
 
-
-function update_git() {
-  cd "$ROOT"
-  find . -iname ".git" | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    echo "$repo"
-    git fetch
-    git reset --hard origin/master
-    echo
-  done
-}
+function update_git() { 
+  cd "$repo/.."
+  echo "$repo"
+  git fetch
+  git reset --hard origin/master
+  echo
+} 
 
 function update_hg() {
-  cd "$ROOT"
-  find . -iname ".hg" | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    echo "$repo"
-    hg pull
-    echo
-  done
+  cd "$repo/.."
+  echo "$repo"
+  hg pull
+  echo
 }
 
 function update_bzr() {
-  cd "$ROOT"
-  find . -iname ".bzr" | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    echo "$repo"
-    bzr pull
-    echo
-  done
+  cd "$repo/.."
+  echo "$repo"
+  bzr pull
+  echo
 }
 
 function update_svn() {
-  cd "$ROOT"
-  find . -iname ".svn" | while read repo; do
-    cd "$ROOT"
-    cd "$repo/.."
-    echo "$repo"
-    svn update
-    echo
-  done
+  cd "$repo/.."
+  echo "$repo"
+  svn update
+  echo
 }
 
 function update() {
-  update_git
-  update_hg
-  update_bzr
-  update_svn
+  map_repos "update"
 }
 
 
